@@ -129,6 +129,7 @@ def mqtt_publish(sensor_data, topic='defult', qos=0):
 
 # 启动函数
 def mqtt_run():
+    a = 0
     # 账号密码验证放到最前面
     # client.username_pw_set('user', 'user')
     # client = mqtt.Client()
@@ -156,7 +157,7 @@ def mqtt_run():
     time.sleep(2)
     # 订阅这个topic，不需要写prodect_key和device_name
     rc, mid = lk.subscribe_topic(lk.to_full_topic("user/get"))
-    while True:
+    while a < 5:
         data = {
             "id": "203302322",
             "version": "1.0",
@@ -168,7 +169,8 @@ def mqtt_run():
             "/sys/a1bw1zXB8k4/Mi90/thing/event/property/post", str(data))
 
         time.sleep(18)
-        pass
+        a = a+1
 
 
-mqtt_run()
+if __name__ == '__main__':
+    mqtt_run()
