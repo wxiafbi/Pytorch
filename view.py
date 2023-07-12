@@ -10,8 +10,8 @@ logger = logging.getLogger('django')
 
 # 来自一机一密的设备
 options = {"ProductKey": "a1bw1zXB8k4",
-           "DeviceName": "Mi90",
-           "DeviceSecret": "fcb727b358187a7ad8ba2e227561cca4"
+           "DeviceName": "Mi175",
+           "DeviceSecret": "93546702e8522310c861000afc965779"
            }
 
 # 示例代码配置设备的设备证书以及连接的公共示例的RegionID
@@ -118,7 +118,7 @@ def mqtt_publish(sensor_data, topic='defult', qos=0):
     try:
         rc, mid = lk.publish_topic(
             lk.to_full_topic("user/update"), sensor_data)
-        print("mqtt_publish：已启动...", "user/update", sensor_data)
+        print("mqtt_publish:已启动...", "user/update", sensor_data)
         return
     except KeyboardInterrupt:
         print("EXIT")
@@ -161,16 +161,15 @@ def mqtt_run():
         data = {
             "id": "203302322",
             "version": "1.0",
-            "params": {"Distance": 5.21, "Distance1": 5.21, "Distance2": 5.21, 'amp': 1, "temp": 1, "electricity": 3.99},
+            "params": {"Distance": 50.21, "Distance1": 50.21, "Distance2": 50.21, 'amp': 1, "temp": 1, "electricity": 3.99, 'L': 50, 'valu': 121.19},
             "method": "thing.event.property.post"
         }
 
         rc, mid = lk.publish_topic(
-            "/sys/a1bw1zXB8k4/Mi90/thing/event/property/post", str(data))
+            "/sys/a1bw1zXB8k4/Mi175/thing/event/property/post", str(data))
 
-        time.sleep(18)
+        time.sleep(10)
         a = a+1
 
 
-if __name__ == '__main__':
-    mqtt_run()
+mqtt_run()
