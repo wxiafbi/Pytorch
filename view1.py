@@ -43,9 +43,6 @@ def sanyuanzu(p_k: str, d_n: str, d_s: str):
     return PASS_WORD
 
 
-
-
-
 def on_connect(session_flag, rc, userdata):
     """
     callback after connect_async
@@ -154,7 +151,8 @@ def mqtt_publish(sensor_data, topic='defult', qos=0):
 # 启动函数
 def mqtt_run(lk):
     a = 0
-    topic='/sys/'+options["ProductKey"]+'/'+options["DeviceName"]+'/thing/event/property/post'
+    topic = '/sys/'+options["ProductKey"]+'/' + \
+        options["DeviceName"]+'/thing/event/property/post'
     # 账号密码验证放到最前面
     # client.username_pw_set('user', 'user')
     # client = mqtt.Client()
@@ -198,4 +196,5 @@ def mqtt_run(lk):
         a = a+1
 
 
-mqtt_run(sanyuanzu(options["ProductKey"],options["DeviceName"],options["DeviceSecret"]))
+mqtt_run(sanyuanzu(options["ProductKey"],
+         options["DeviceName"], options["DeviceSecret"]))
