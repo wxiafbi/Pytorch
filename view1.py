@@ -3,43 +3,42 @@ import logging
 import sys
 import threading
 import time
-
+import other
+import wacun
 from linkkit import linkkit
 
 logger = logging.getLogger('django')
-
 # 来自一机一密的设备
-options = {"ProductKey": "a1bw1zXB8k4",
-           "DeviceName": "Mi98",
-           "DeviceSecret": "290b3479cc2604418db6011596b7e9c8"
-           }
-options1 = {"ProductKey": "a1bw1zXB8k4",
-            "DeviceName": "Mi90",
-            "DeviceSecret": "fcb727b358187a7ad8ba2e227561cca4"
-            }
-options2 = {"ProductKey": "a1bw1zXB8k4",
-            "DeviceName": "Mi175",
-            "DeviceSecret": "93546702e8522310c861000afc965779"
-            }
-options3 = {"ProductKey": "a1bw1zXB8k4",
-            "DeviceName": "Mi96",
-            "DeviceSecret": "fd8cecfb378836304cc48c26f7bb677a"
-            }
-
+# options = {"ProductKey": "a1bw1zXB8k4",
+#             "DeviceName": "Mi98",
+#             "DeviceSecret": "290b3479cc2604418db6011596b7e9c8"
+#             }
+# options1 = {"ProductKey": "a1bw1zXB8k4",
+#             "DeviceName": "Mi90",
+#             "DeviceSecret": "fcb727b358187a7ad8ba2e227561cca4"
+#             }
+# options2 = {"ProductKey": "a1bw1zXB8k4",
+#              "DeviceName": "Mi175",
+#              "DeviceSecret": "93546702e8522310c861000afc965779"
+#             }
+# options3 = {"ProductKey": "a1bw1zXB8k4",
+#             "DeviceName": "Mi96",
+#             "DeviceSecret": "fd8cecfb378836304cc48c26f7bb677a"
+#             }
 # 示例代码配置设备的设备证书以及连接的公共示例的RegionID
-lk = linkkit.LinkKit(
-    host_name="cn-shanghai",  # 华东2（上海），根据自己的RegionID
-    product_key=options["ProductKey"],
-    device_name=options["DeviceName"],
-    device_secret=options["DeviceSecret"])
+# lk = linkkit.LinkKit(
+    # host_name="cn-shanghai",  # 华东2（上海），根据自己的RegionID
+    # product_key=options["ProductKey"],
+    # device_name=options["DeviceName"],
+    # device_secret=options["DeviceSecret"])
 
 
 def sanyuanzu(p_k: str, d_n: str, d_s: str):
     PASS_WORD = linkkit.LinkKit(
         host_name="cn-shanghai",  # 华东2（上海），根据自己的RegionID
-        product_key=options["ProductKey"],
-        device_name=options["DeviceName"],
-        device_secret=options["DeviceSecret"])
+        product_key=p_k,
+        device_name=d_n,
+        device_secret=d_s)
     return PASS_WORD
 
 
@@ -132,9 +131,9 @@ def on_publish_topic(mid, userdata):
     :param userdata: type: description:same as LinkKit input parameter user_data
     """
     print("on_publish_topic mid:%d" % mid)
-
-
 # mqtt发布启动函数
+
+
 def mqtt_publish(sensor_data, topic='defult', qos=0):
     try:
         rc, mid = lk.publish_topic(
@@ -146,13 +145,13 @@ def mqtt_publish(sensor_data, topic='defult', qos=0):
         # 这是网络循环的阻塞形式，直到客户端调用disconnect（）时才会返回。它会自动处理重新连接。
         lk.on_disconnect()
         sys.exit(0)
-
-
 # 启动函数
-def mqtt_run(lk):
+
+
+def mqtt_run(lk, pp_n: str, dd_n: str):
     a = 0
-    topic = '/sys/'+options["ProductKey"]+'/' + \
-        options["DeviceName"]+'/thing/event/property/post'
+    topic = '/sys/'+pp_n+'/' + \
+        dd_n+'/thing/event/property/post'
     # 账号密码验证放到最前面
     # client.username_pw_set('user', 'user')
     # client = mqtt.Client()
@@ -179,7 +178,7 @@ def mqtt_run(lk):
     # 因为他是他是异步调用需要时间所以如果没有这个延时函数的话，他就会出现not in connected state的错误
     time.sleep(2)
     # 订阅这个topic，不需要写prodect_key和device_name
-    rc, mid = lk.subscribe_topic(lk.to_full_topic("user/get"))
+    # rc, mid = lk.subscribe_topic(lk.to_full_topic("user/get"))
     while a < 5:
         data = {
             "id": "203302322",
@@ -191,10 +190,13 @@ def mqtt_run(lk):
         # rc, mid = lk.publish_topic(
         #     "/sys/a1bw1zXB8k4/Mi175/thing/event/property/post", str(data))
         rc, mid = lk.publish_topic(topic, str(data))
-
-        time.sleep(10)
+        # time.sleep(3)
         a = a+1
 
+def kk():
+    for i in range(0,628):
+        mqtt_run(sanyuanzu(wacun.options[i]["ProductKey"],
+            wacun.options[i]["DeviceName"], wacun.options[i]["DeviceSecret"]),wacun.options[i]["ProductKey"],wacun.options[i]["DeviceName"])
 
-mqtt_run(sanyuanzu(options["ProductKey"],
-         options["DeviceName"], options["DeviceSecret"]))
+if __name__ == '__main__':
+    kk()
